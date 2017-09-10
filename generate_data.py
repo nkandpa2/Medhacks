@@ -79,9 +79,12 @@ def generate_pop(start_means, end_means, start_std, end_std, pop_size):
     plt.xlabel('Systolic', fontsize=16)
     plt.ylabel('Diastolic', fontsize=16)
     plt.subplots_adjust(bottom=0.25, left=0.25)
-      
+     
     plt.plot(end_points[0], end_points[1], 'ro')
     plt.plot(start_points[0], start_points[1], 'bo')
+    
+
+    
 
     for c in corners:
         (sys, di, color) = c
@@ -96,6 +99,9 @@ start_std = [8,6]
 end_std = [12,9]
 
 data_normal = generate_data(start_means, end_means, start_std, end_std, N_POP, 'normal')
+np.savetxt('data_treated_start.csv', data_normal[0,:,:], delimiter=',', header='systolic,diastolic', comments='')
+np.savetxt('data_treated_end.csv', data_normal[-1,:,:], delimiter=',', header='systolic,diastolic', comments='')
+
 """
 for d in range(N_POP):
     p1_feat1 = data_normal[:,d,1]
@@ -103,6 +109,8 @@ for d in range(N_POP):
 plt.show()
 """
 data_untreated = generate_data(start_means, end_means, start_std, end_std, N_POP, 'untreated')
+np.savetxt('data_untreated_start.csv', data_untreated[0,:,:], delimiter=',', header='systolic,diastolic', comments='')
+np.savetxt('data_untreated_end.csv', data_untreated[-1,:,:], delimiter=',', header='systolic,diastolic', comments='')
 """
 for d in range(N_POP):
     p1_feat1 = data_untreated[:,d,1]

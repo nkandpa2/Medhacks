@@ -74,6 +74,11 @@ def generate_pop(start_means, end_means, start_std, end_std, pop_size):
             noise = np.random.normal(0, 5.0/3, TIME_STEPS)
             data[:,index,feat] = np.linspace(start, end, TIME_STEPS) + noise
             index += 1
+
+    plt.axis([100,200,50,100])
+    plt.xlabel('Systolic', fontsize=16)
+    plt.ylabel('Diastolic', fontsize=16)
+    plt.subplots_adjust(bottom=0.25, left=0.25)
       
     plt.plot(end_points[0], end_points[1], 'ro')
     plt.plot(start_points[0], start_points[1], 'bo')
@@ -82,7 +87,6 @@ def generate_pop(start_means, end_means, start_std, end_std, pop_size):
         (sys, di, color) = c
         plt.plot([0,sys,sys],[di,di,0],color,linewidth=4.0)
     
-    plt.axis([100,200,50,100])
     plt.show()
     return data
 

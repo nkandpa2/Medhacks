@@ -77,6 +77,7 @@ def generate_pop(start_means, end_means, start_std, end_std, pop_size):
             data[:,index,feat] = np.linspace(start, end, TIME_STEPS) + noise
             index += 1
 
+    """
     plt.axis([100,200,50,100])
     plt.xlabel('Systolic', fontsize=16)
     plt.ylabel('Diastolic', fontsize=16)
@@ -84,15 +85,15 @@ def generate_pop(start_means, end_means, start_std, end_std, pop_size):
      
     plt.plot(end_points[0], end_points[1], 'ro')
     plt.plot(start_points[0], start_points[1], 'bo')
-    
 
     
-
     for c in corners:
         (sys, di, color) = c
         plt.plot([0,sys,sys],[di,di,0],color,linewidth=4.0)
     
     plt.show()
+    """
+
     return data
 
 start_means = [122,67]
@@ -108,6 +109,7 @@ start_dia_bad = np.random.normal(end_means[1], end_std[1], N_POP)
 
 plt.plot(start_sys_good, start_dia_good, 'bo')
 plt.axis([100,200,50,115])
+plt.title('Diastolic vs Systolic BP for Healthy Individuals')
 plt.xlabel('Systolic', fontsize=16)
 plt.ylabel('Diastolic', fontsize=16)
 
@@ -116,10 +118,11 @@ for c in corners:
     plt.plot([0,sys,sys],[di,di,0],color,linewidth=4.0)
 plt.show()
 
+plt.plot(start_sys_bad, start_dia_bad, 'bo')
 plt.axis([100,200,50,115])
+plt.title('Diastolic vs Systolic for Unhealthy Individuals')
 plt.xlabel('Systolic', fontsize=16)
 plt.ylabel('Diastolic', fontsize=16)
-plt.plot(start_sys_bad, start_dia_bad, 'bo')
 for c in corners_black:
     (sys, di, color) = c
     plt.plot([0,sys,sys],[di,di,0],color,linewidth=4.0)
@@ -129,6 +132,27 @@ plt.show()
 
 
 data_normal = generate_data(start_means, end_means, start_std, end_std, N_POP, 'normal')
+for feat in range(2):
+    for i in range(N_POP):
+        ylabel = ''
+        if feat == 0:
+            ylabel = 'Systolic'
+        else:
+            ylabel = 'Diastolic'
+        
+        user_input = input()
+        if user_input == 'n':
+            plt.plot(data_normal[:,i,feat])
+            plt.xlabel('Time')
+            plt.ylabel(ylabel)
+            plt.title('{0} BP Over Time for Individual {1}'.format(ylabel,i))
+            plt.show()
+
+        else:
+            break
+
+
+
 np.savetxt('data_treated_start.csv', data_normal[0,:,:], delimiter=',', header='systolic,diastolic', comments='')
 np.savetxt('data_treated_end.csv', data_normal[-1,:,:], delimiter=',', header='systolic,diastolic', comments='')
 
@@ -147,6 +171,7 @@ data_treated_std = np.std(data_treated, axis=1)
 data_untreated_std = np.std(data_untreated, axis=1)
 data_normal_std = np.std(data_normal, axis=1)
 
+"""
 plt.plot(data_treated_mean)
 plt.plot(data_treated_mean + data_treated_std)
 plt.plot(data_treated_mean - data_treated_std)
@@ -161,6 +186,7 @@ plt.plot(data_normal_mean)
 plt.plot(data_normal_mean + data_normal_std)
 plt.plot(data_normal_mean - data_normal_std)
 plt.show()
+"""
 
 risk = []
 for point in data_treated_mean:
@@ -176,8 +202,10 @@ risk = []
 for point in data_normal_mean:
     risk.append(get_bin(point, corners))
 plt.plot(risk)
-
+plt.xlabel('Time')
+plt.ylabel('Risk Score')
 plt.show()
+
 
 for d in range(N_POP):
     individual = data_untreated[:,d,:]
@@ -205,19 +233,22 @@ for d in range(N_POP):
         x = np.expand_dims(x, axis=1)
         ind = np.expand_dims(individual[:,i], axis=1)
         data = np.hstack((x, ind))
-        print(np.shape(data))
         np.savetxt(prev_file, data, delimiter=',', header='time,y', comments='')
         next_x = np.expand_dims(next_x, axis=1)
         next_y = np.expand_dims(next_y, axis=1)
         data = np.hstack((next_x, next_y))
-        print(np.shape(data))
         np.savetxt(next_file, data, delimiter=',', header='time,y', comments='')
-        
-    p = (point[0], point[1])
-    print('Bin: {0}'.format(get_bin(p, corners)))
-    plt.xlabel('Time')
-    plt.ylabel('Blood Pressure')
-    plt.show()
+    
+    user_input = input()
+    if user_input == 'n':
+        p = (point[0], point[1])
+        print('Bin: {0}'.format(get_bin(p, corners)))
+        plt.xlabel('Time')
+        plt.ylabel('Blood Pressure')
+        plt.title('Systolic and Diastolic BP Over Time with Forecast (Individual {0})'.format(d))
+        plt.show()
+    else:
+        break
 
 adhere = np.linspace(0,1,20)
 slope1 = -(0.03/0.75)*adhere+0.03 + np.random.normal(0,0.001,20)
